@@ -1,0 +1,8 @@
+{
+  "name": "Charminar XR - Architectural Heritage & Voice Tour",
+  "description": "Visualize Hyderabad's iconic Charminar monument in augmented reality on tabletop or physical surfaces, explore architectural hotspots, interactive voice-guided tours, and 3D optimizations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

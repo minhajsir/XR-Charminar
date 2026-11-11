@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Charminar XR - Architectural Heritage & Voice Tour</title>
+    <meta name="description" content="Visualize Hyderabad's iconic Charminar monument in augmented reality on tabletop or physical surfaces, explore architectural hotspots, interactive voice-guided tours, and 3D optimizations." />
+    <meta property="og:title" content="Charminar XR - Architectural Heritage & Voice Tour" />
+    <meta property="og:description" content="Visualize Hyderabad's iconic Charminar monument in augmented reality on tabletop or physical surfaces, explore architectural hotspots, interactive voice-guided tours, and 3D optimizations." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="stylesheet" href="/src/index.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- 2D HUD Overlay for Desktop Simulator & Mobile WebXR -->
+    <div id="charminar-hud" class="hud-container">
+      <!-- Top Header -->
+      <header class="hud-header">
+        <div class="hud-brand">
+          <span class="hud-monument-icon">🕌</span>
+          <div>
+            <h1 class="hud-title">Charminar XR</h1>
+            <p class="hud-subtitle">Hyderabad (1591 CE) • Architectural Heritage & Voice Tour</p>
+          </div>
+        </div>
+        <div class="hud-actions">
+          <button id="hud-btn-guide" class="hud-btn hud-btn-emerald">
+            <span>📱</span> Unity AR Guide
+          </button>
+          <button id="hud-btn-upload" class="hud-btn hud-btn-amber">
+            <span>📂</span> Load .FBX / .GLTF
+          </button>
+        </div>
+      </header>
+
+      <!-- Bottom Audio Tour & Controls Floating Dock -->
+      <div class="hud-dock">
+        <!-- Tour Card in HUD -->
+        <div class="hud-card">
+          <div class="hud-card-header">
+            <span id="hud-tour-badge" class="hud-badge">ARCHITECTURE</span>
+            <span id="hud-tour-progress" class="hud-progress">Stop 1 of 6 | 1591 CE</span>
+          </div>
+          <h2 id="hud-tour-title" class="hud-card-title">The Four Grand Arches</h2>
+          <p id="hud-tour-desc" class="hud-card-desc">
+            Built in 1591 by Sultan Muhammad Quli Qutb Shah, these monumental arches span 11 meters across and open into historical cardinal streets.
+          </p>
+          <div class="hud-audio-controls">
+            <button id="hud-btn-prev" class="hud-btn-icon" title="Previous Stop">⏮</button>
+            <button id="hud-btn-play" class="hud-btn-play" title="Play / Pause Audio Tour">
+              <span id="hud-play-icon">▶</span> Voice Guide
+            </button>
+            <button id="hud-btn-next" class="hud-btn-icon" title="Next Stop">⏭</button>
+          </div>
+        </div>
+
+        <!-- Quick Toggles Toolbar -->
+        <div class="hud-toolbar">
+          <button id="hud-btn-lighting" class="hud-tool-btn">Night Illumination</button>
+          <button id="hud-btn-wireframe" class="hud-tool-btn">Blueprint X-Ray</button>
+          <button id="hud-btn-mode" class="hud-tool-btn">Tabletop Mode</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unity & AR Foundation Guide Modal -->
+    <div id="unity-guide-modal" class="modal-backdrop hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <span class="modal-icon">⚙️</span>
+            <div>
+              <h2 class="modal-title">Unity & AR Foundation Production Architecture</h2>
+              <p class="modal-sub">Step-by-step setup for iOS (ARKit) & Android (ARCore) targeting phones & headsets</p>
+            </div>
+          </div>
+          <button id="hud-btn-close-guide" class="modal-close-btn">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="guide-grid">
+            <div class="guide-box">
+              <h3>1. Required Unity Packages (Package Manager)</h3>
+              <ul>
+                <li><code>com.unity.xr.arfoundation</code> (v5.1+)</li>
+                <li><code>com.unity.xr.arkit</code> (iOS ARKit Provider)</li>
+                <li><code>com.unity.xr.arcore</code> (Android ARCore Provider)</li>
+                <li><code>com.unity.render-pipelines.universal</code> (URP for 60/90 FPS mobile AR)</li>
+              </ul>
+            </div>
+
+            <div class="guide-box">
+              <h3>2. Scene Hierarchy Setup</h3>
+              <ul>
+                <li><strong>XR Origin (AR Rig)</strong> with AR Camera, AR Tracked Pose Driver</li>
+                <li><strong>AR Session</strong> + <strong>AR Session Origin</strong></li>
+                <li><strong>AR Plane Manager</strong> (Detection Mode: <code>Horizontal</code> for Tabletop/Floor)</li>
+                <li><strong>AR Raycast Manager</strong> (Touch-to-place on detected plane surface)</li>
+              </ul>
+            </div>
+
+            <div class="guide-box">
+              <h3>3. FBX 3D Model Optimization Checklist</h3>
+              <ul>
+                <li><strong>Mesh Compression:</strong> Set to <em>High</em> in Model Import Settings.</li>
+                <li><strong>Read/Write Enabled:</strong> <em>Disabled</em> to save 50% CPU RAM.</li>
+                <li><strong>Normals:</strong> <em>Calculate (Smooth Angle: 60°)</em> for crisp architectural edges.</li>
+                <li><strong>Draw Call Reduction:</strong> Combine stone trims and minarets with GPU Instancing.</li>
+                <li><strong>LOD Group:</strong> LOD0 (full stucco details ~25k tris) & LOD1 (silhouette ~6k tris).</li>
+              </ul>
+            </div>
+
+            <div class="guide-box">
+              <h3>4. Touch Gesture Interactions</h3>
+              <ul>
+                <li><strong>1-Finger Drag:</strong> Orbit / rotate Charminar around Y-axis.</li>
+                <li><strong>2-Finger Pinch:</strong> Smoothly scale between 0.2m (tabletop) and 2.0m (room scale).</li>
+                <li><strong>Single Tap on Beacon:</strong> Highlight architectural hotspot & trigger voice audio.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="guide-code-section">
+            <h3>C# AR Tabletop Placement Snippet (ARPlacementManager.cs)</h3>
+            <pre><code>using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
+
+public class CharminarARPlacement : MonoBehaviour {
+    [SerializeField] private ARRaycastManager raycastManager;
+    [SerializeField] private GameObject charminarPrefab;
+    private GameObject spawnedMonument;
+    private static List&lt;ARRaycastHit&gt; hits = new List&lt;ARRaycastHit&gt;();
+
+    void Update() {
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) {
+            Vector2 touchPos = Input.GetTouch(0).position;
+            if (raycastManager.Raycast(touchPos, hits, TrackableType.PlaneWithinPolygon)) {
+                Pose hitPose = hits[0].pose;
+                if (spawnedMonument == null) {
+                    spawnedMonument = Instantiate(charminarPrefab, hitPose.position, hitPose.rotation);
+                } else {
+                    spawnedMonument.transform.position = hitPose.position;
+                }
+            }
+        }
+    }
+}</code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/src/index.ts"></script>
+  </body>
+</html>
